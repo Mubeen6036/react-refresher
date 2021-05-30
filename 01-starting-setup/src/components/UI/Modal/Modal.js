@@ -8,7 +8,7 @@ const Modal = props =>{
         {
             ReactDOM.createPortal(
             <div className={classes.backdrop} onClick={props.onClose}>
-                <div className={classes.modal}>
+                <div className={classes.modal} onClick = {event => event.stopPropagation()}>
                     {props.children}
                 </div>
             </div>, portalElement)
