@@ -75,7 +75,7 @@ const removeItem = (state, action) =>{
         return {items : updatedItems, totalAmount : updatedAmount};
     }else{
         updatedItems = [...state.items];
-        updatedItem.splice(existingCartIndex, 1);
+        updatedItems.splice(existingCartIndex, 1);
         return {items : updatedItems, totalAmount : updatedAmount};
     }
     
