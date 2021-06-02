@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import MoviesList from './components/MoviesList';
 import './App.css';
@@ -6,9 +6,14 @@ import './App.css';
 function App() {
 
   const [movies, setMovies] = useState([]);
-
-  const fetchMovieHandler = () =>{
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const fetchMovieHandler = useCallback(() =>{
+    setIsLoading(true);
     fetch('https://swapi.dev/api/films/').then(response => {
+      if(!response.ok){
+        throw new Error('Something went wrong!!!');
+      }
       return response.json();
     }).then(data => {
       const transormedData = data.results.map(film =>{
@@ -20,20 +25,26 @@ function App() {
         }
       });
       setMovies(transormedData);
+      setIsLoading(false);
     }).catch(error =>{
-      console.log(error);
+      setError(error.message);
+      setIsLoading(false);
     });
-  }
+  }, []);
 
-  fetchMovieHandler();
+  useEffect(()=>{
+    fetchMovieHandler();
+  }, [fetchMovieHandler]);
 
   return (
     <React.Fragment>
       <section>
-        <button>Fetch Movies</button>
+        <button onClick={fetchMovieHandler}>Fetch Movies</button>
       </section>
       <section>
-        <MoviesList movies={movies} />
+        {error && <p>{error}</p>}
+        {!isLoading && movies.length > 0 && <MoviesList movies={movies} />}
+        {isLoading && <h1 style={{color:'black', margin:'auto'}}>Loading...</h1>}
       </section>
     </React.Fragment>
   );
