@@ -13,16 +13,30 @@ function App() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('https://swapi.dev/api/films/');
+      const response = await fetch('https://dark-man-416e9-default-rtdb.firebaseio.com/movies.json',{
+        headers:{
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
       if (!response.ok) {
         throw new Error('Something went wrong!');
       }
 
       const data = await response.json();
 
-      const transformedMovies = data.results.map((movieData) => {
+      const loadedMovies = [];
+      for(const key in data){
+        loadedMovies.push({
+          id : key,
+          title : data[key].title,
+          opening_crawl : data[key].openingText,
+          release_date : data[key].releaseDate
+        })
+      }
+
+      const transformedMovies = loadedMovies.map((movieData) => {
         return {
-          id: movieData.episode_id,
+          id: movieData.id,
           title: movieData.title,
           openingText: movieData.opening_crawl,
           releaseDate: movieData.release_date,
@@ -40,7 +54,17 @@ function App() {
   }, [fetchMoviesHandler]);
 
   function addMovieHandler(movie) {
-    console.log(movie);
+    fetch('https://dark-man-416e9-default-rtdb.firebaseio.com/movies.json',{
+      method : 'POST',
+      body : JSON.stringify(movie),
+      headers : {
+        'Content-type' : 'application/json' 
+      }
+    }).then(response =>{
+      return response.json()
+    }).then(data =>{
+      console.log(data);
+    })
   }
 
   let content = <p>Found no movies.</p>;
