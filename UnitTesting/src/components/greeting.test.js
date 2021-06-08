@@ -27,4 +27,15 @@ describe('Greeting Test Suite', ()=>{
         expect(HelloWorldElement).toBeInTheDocument();
     })
 
+    test('button clicked and does initial text exits', ()=>{
+        //arrange
+        render(<Greeting/>);
+        //act
+        const button = screen.getByRole('button');
+        userEvent.click(button);
+        //Assert
+        const HelloWorldElement = screen.queryByText(`It's good to see you`, {exact: false});
+        expect(HelloWorldElement).toBeNull();
+    })
+
 })
